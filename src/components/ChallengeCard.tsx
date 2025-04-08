@@ -11,6 +11,7 @@ interface ChallengeCardProps {
   description: string;
   isCompleted?: boolean;
   isLocked?: boolean;
+  customAction?: React.ReactNode;
 }
 
 const ChallengeCard: React.FC<ChallengeCardProps> = ({
@@ -19,7 +20,8 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
   difficulty,
   description,
   isCompleted = false,
-  isLocked = false
+  isLocked = false,
+  customAction
 }) => {
   const difficultyColors = {
     easy: 'bg-green-900/20 text-green-500 border-green-800/30',
@@ -63,6 +65,8 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
             <Lock className="h-4 w-4 mr-2" />
             Complete previous challenges to unlock
           </div>
+        ) : customAction ? (
+          customAction
         ) : (
           <div className="flex gap-2">
             <Link
