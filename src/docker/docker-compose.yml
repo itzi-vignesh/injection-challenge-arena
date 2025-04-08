@@ -1,0 +1,39 @@
+
+version: '3'
+
+services:
+  sql-injection-login-bypass:
+    build:
+      context: ./login-bypass
+    container_name: sql-injection-login-bypass
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./login-bypass:/app
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+
+  sql-injection-union-attacks:
+    build:
+      context: ./union-attacks
+    container_name: sql-injection-union-attacks
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./union-attacks:/app
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+
+  sql-injection-blind-injection:
+    build:
+      context: ./blind-injection
+    container_name: sql-injection-blind-injection
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./blind-injection:/app
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped

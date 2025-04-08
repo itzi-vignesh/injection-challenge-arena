@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Lock, CheckCircle, AlertCircle, Terminal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ChallengeCardProps {
@@ -64,12 +64,22 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
             Complete previous challenges to unlock
           </div>
         ) : (
-          <Link
-            to={`/challenges/${id}`}
-            className="flex items-center justify-center py-2 bg-cyber-primary/10 hover:bg-cyber-primary/20 rounded border border-cyber-primary/30 text-sm text-cyber-primary transition-colors"
-          >
-            {isCompleted ? "Practice Again" : "Start Challenge"}
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              to={`/challenges/${id}`}
+              className="flex-1 flex items-center justify-center py-2 bg-cyber-primary/10 hover:bg-cyber-primary/20 rounded border border-cyber-primary/30 text-sm text-cyber-primary transition-colors"
+            >
+              {isCompleted ? "Practice Again" : "Start Challenge"}
+            </Link>
+            
+            <Link
+              to={`/challenge-env/${id}`}
+              className="flex items-center justify-center px-3 py-2 bg-cyber-muted hover:bg-cyber-background/70 rounded border border-cyber-border text-sm transition-colors"
+              title="Launch in container"
+            >
+              <Terminal className="h-4 w-4" />
+            </Link>
+          </div>
         )}
       </div>
     </div>
