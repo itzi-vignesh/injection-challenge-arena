@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, RefreshCw, Terminal, ExternalLink } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Terminal, ExternalLink, Maximize, Minimize } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TerminalOutput from '@/components/TerminalOutput';
@@ -44,6 +44,7 @@ const ChallengeEnvironment = () => {
   const [containerStatus, setContainerStatus] = useState<'stopped' | 'starting' | 'running' | 'error'>('stopped');
   const [terminalOutput, setTerminalOutput] = useState<string[]>([]);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   const environment = challengeId ? challengeEnvironments[challengeId as keyof typeof challengeEnvironments] : null;
   
@@ -157,6 +158,19 @@ const ChallengeEnvironment = () => {
       startContainer();
     }
   };
+
+  // Function to open the lab in a new tab
+  const openInNewTab = () => {
+    if (!environment || containerStatus !== 'running') return;
+    
+    const url = `/lab-environments/${challengeId}`;
+    window.open(url, '_blank');
+  };
+
+  // Toggle fullscreen mode for the lab iframe
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
   
   if (!environment) {
     return null; // Will redirect in useEffect
@@ -236,58 +250,84 @@ const ChallengeEnvironment = () => {
           </div>
           
           {/* Lab interface */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className={`grid ${isFullscreen ? '' : 'grid-cols-1 lg:grid-cols-2'} gap-8 mb-8`}>
+            {!isFullscreen && (
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold">Terminal</h3>
+                  
+                  {elapsedTime > 0 && containerStatus === 'starting' && (
+                    <span className="text-sm text-cyber-foreground/70">
+                      Starting... {elapsedTime}s
+                    </span>
+                  )}
+                </div>
+                
+                <TerminalOutput 
+                  output={terminalOutput} 
+                  isLoading={containerStatus === 'starting'}
+                  className="mb-6"
+                />
+                
+                <div className="bg-cyber-muted border border-cyber-border rounded-lg p-5">
+                  <h4 className="text-md font-semibold mb-3">Instructions</h4>
+                  
+                  {containerStatus === 'stopped' && (
+                    <p className="text-sm text-cyber-foreground/80">
+                      Click "Start Lab Environment" to launch the Docker container with the vulnerable application.
+                    </p>
+                  )}
+                  
+                  {containerStatus === 'starting' && (
+                    <p className="text-sm text-cyber-foreground/80">
+                      Please wait while the Docker container starts up. This may take a few moments.
+                    </p>
+                  )}
+                  
+                  {containerStatus === 'running' && (
+                    <div className="text-sm text-cyber-foreground/80 space-y-3">
+                      <p>
+                        The vulnerable application is now running in the iframe on the right. Use SQL injection techniques 
+                        appropriate for this lab to exploit the vulnerability.
+                      </p>
+                      <p>
+                        If you need to reset the lab environment at any point, click the "Reset Environment" button.
+                      </p>
+                      <p className="text-cyber-primary">
+                        Your goal is to identify and exploit the SQL injection vulnerability to access unauthorized data.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold">Terminal</h3>
-                
-                {elapsedTime > 0 && containerStatus === 'starting' && (
-                  <span className="text-sm text-cyber-foreground/70">
-                    Starting... {elapsedTime}s
-                  </span>
-                )}
-              </div>
-              
-              <TerminalOutput 
-                output={terminalOutput} 
-                isLoading={containerStatus === 'starting'}
-                className="mb-6"
-              />
-              
-              <div className="bg-cyber-muted border border-cyber-border rounded-lg p-5">
-                <h4 className="text-md font-semibold mb-3">Instructions</h4>
-                
-                {containerStatus === 'stopped' && (
-                  <p className="text-sm text-cyber-foreground/80">
-                    Click "Start Lab Environment" to launch the Docker container with the vulnerable application.
-                  </p>
-                )}
-                
-                {containerStatus === 'starting' && (
-                  <p className="text-sm text-cyber-foreground/80">
-                    Please wait while the Docker container starts up. This may take a few moments.
-                  </p>
-                )}
+                <h3 className="text-lg font-semibold">Lab Application</h3>
                 
                 {containerStatus === 'running' && (
-                  <div className="text-sm text-cyber-foreground/80 space-y-3">
-                    <p>
-                      The vulnerable application is now running in the iframe on the right. Use SQL injection techniques 
-                      appropriate for this lab to exploit the vulnerability.
-                    </p>
-                    <p>
-                      If you need to reset the lab environment at any point, click the "Reset Environment" button.
-                    </p>
-                    <p className="text-cyber-primary">
-                      Your goal is to identify and exploit the SQL injection vulnerability to access unauthorized data.
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-cyber-foreground/70 hover:text-cyber-primary"
+                      onClick={toggleFullscreen}
+                    >
+                      {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+                    </Button>
+                    
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-cyber-foreground/70 hover:text-cyber-primary"
+                      onClick={openInNewTab}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
                   </div>
                 )}
               </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Lab Application</h3>
               
               {containerStatus !== 'running' ? (
                 <div className="h-[400px] bg-cyber-terminal border border-cyber-border rounded-md flex items-center justify-center">
@@ -316,7 +356,7 @@ const ChallengeEnvironment = () => {
                   </div>
                 </div>
               ) : (
-                <div className="border border-cyber-border rounded-md overflow-hidden bg-white h-[400px]">
+                <div className={`border border-cyber-border rounded-md overflow-hidden bg-white ${isFullscreen ? 'h-[calc(100vh-300px)]' : 'h-[400px]'}`}>
                   <div className="bg-cyber-terminal p-2 flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
@@ -326,20 +366,35 @@ const ChallengeEnvironment = () => {
                     <span className="text-xs text-cyber-foreground/70">
                       localhost:{environment.port}
                     </span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 text-cyber-foreground/70 hover:text-cyber-primary"
+                        onClick={toggleFullscreen}
+                      >
+                        {isFullscreen ? <Minimize className="h-3 w-3" /> : <Maximize className="h-3 w-3" />}
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 text-cyber-foreground/70 hover:text-cyber-primary"
+                        onClick={openInNewTab}
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                   
                   <iframe 
                     src={`/lab-environments/${challengeId}`} 
-                    className="w-full h-[calc(400px-32px)]"
+                    className={`w-full ${isFullscreen ? 'h-[calc(100vh-332px)]' : 'h-[calc(400px-32px)]'}`}
                     title={`${environment.name} Lab Environment`}
                   />
                 </div>
               )}
               
-              {containerStatus === 'running' && (
+              {containerStatus === 'running' && !isFullscreen && (
                 <div className="mt-4 flex justify-end">
                   <Button 
                     variant="outline" 
@@ -357,7 +412,7 @@ const ChallengeEnvironment = () => {
         </div>
       </main>
       
-      <Footer />
+      {!isFullscreen && <Footer />}
     </div>
   );
 };
