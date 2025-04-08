@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,21 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Cybersecurity theme colors
+				cyber: {
+					background: '#0D1117',
+					foreground: '#E6EDF3',
+					primary: '#7FE9DE',
+					secondary: '#2DD4BF',
+					accent: '#14B8A6',
+					muted: '#171F2E',
+					border: '#30363D',
+					terminal: '#0A0E14',
+					success: '#3BBA9C',
+					warning: '#FFD166',
+					error: '#FF5A5F',
+					info: '#3498DB'
 				}
 			},
 			borderRadius: {
@@ -84,11 +100,21 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				blink: {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' }
+				},
+				typing: {
+					from: { width: '0' },
+					to: { width: '100%' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				blink: 'blink 1s step-end infinite',
+				typing: 'typing 3.5s steps(40, end)'
 			}
 		}
 	},
