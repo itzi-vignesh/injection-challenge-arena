@@ -1,0 +1,23 @@
+
+# SQL Injection Training Platform Requirements
+
+## Frontend Dependencies
+- React 18+
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- React Router DOM
+- Recharts for data visualization
+- Lucide React for icons
+- React Query for data fetching
+
+## Docker Requirements
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+
+## Database
+- MariaDB (used in containerized challenges)
+
+## Development Environment
+- Node.js 16.0+
+- npm 8.0+
